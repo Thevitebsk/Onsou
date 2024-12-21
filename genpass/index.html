@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body, html {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(120deg, #89f7fe, #66a6ff);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        header {
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            color: #4a90e2;
+        }
+
+        header nav a {
+            margin: 0 1rem;
+            text-decoration: none;
+            color: #555;
+            font-weight: 600;
+            transition: color 0.3s ease, background-color 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        header nav a:hover {
+            color: #fff;
+            background-color: #4a90e2;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: #fff;
+            margin-top: auto;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .password-output {
+            font-size: 1.25rem;
+            margin: 1rem 0;
+            font-weight: bold;
+            word-wrap: break-word;
+        }
+
+        .password-options {
+            margin: 1rem 0;
+        }
+
+        .password-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .password-buttons button {
+            background: #4a90e2;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 0.5rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .password-buttons button:hover {
+            background: #3a78c2;
+        }
+
+        /* Темний режим */
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4a90e2;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background: #3a78c2;
+        }
+
+        body.dark-mode {
+            background: #121212;
+            color: #f0f0f0;
+        }
+
+        body.dark-mode .container,
+        body.dark-mode footer {
+            background: #1e1e1e;
+            color: #f0f0f0;
+        }
+        body.dark-mode header {
+            background: #1e1e1e
+        }
+        body.dark-mode header nav a {
+            color: #f0f0f0
+        }
+
+        /* Cookie Notification */
+        .cookie-notification {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cookie-notification p {
+            margin: 0;
+            flex-grow: 1;
+            text-align: left;
+            padding: 0 1rem;
+        }
+
+        .cookie-notification button {
+            background: #4a90e2;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 0.5rem;
+        }
+
+        .cookie-notification button:hover {
+            background: #66a6ff;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+                /* Modal styles */
+                .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            z-index: 1001;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+
+        .close-btn {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #555;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Onsou Password Generator</h1>
+        <nav>
+            <a href="#" id="homeBtn">Home</a>
+            <a href="#" id="aboutBtn">About</a>
+            <a href="#" id="contactBtn">Contact</a>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Generate a Secure Password</h2>
+
+        <div class="password-options">
+            <label><input type="checkbox" id="uppercase" checked> Include Uppercase Letters</label><br>
+            <label><input type="checkbox" id="lowercase" checked> Include Lowercase Letters</label><br>
+            <label><input type="checkbox" id="numbers" checked> Include Numbers</label><br>
+            <label><input type="checkbox" id="symbols"> Include Symbols</label><br>
+        </div>
+
+        <div class="password-output" id="passwordOutput">Your password will appear here</div>
+
+        <div class="password-buttons">
+            <button id="generateBtn">Generate Password</button>
+            <button id="copyBtn">Copy Password</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Onsou</p>
+    </footer>
+
+    <div class="dark-mode-toggle" id="darkModeToggle">Dark Mode</div>
+
+    <div class="cookie-notification" id="cookieNotification">
+        <p>We use cookies to improve your experience. By using our site, you accept cookies.</p>
+        <button id="acceptCookies">Accept</button>
+        <button id="declineCookies">Decline</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-header">
+            <h2>About Onsou Translator</h2>
+            <span class="close-btn" id="closeAbout">&times;</span>
+        </div>
+        <p>
+            Onsou Password Generator<br>
+            Last update: 12/21/2024<br>
+            Generator by: FedouM<br>
+            License: none<br>
+            Type generator: Free<br>
+            Version: 1.0.1<br>
+            What new in update: not new update
+        </p>
+    </div>
+
+    <!-- Contact Modal -->
+    <div class="modal" id="contactModal">
+        <div class="modal-header">
+            <h2>Contact Us</h2>
+            <span class="close-btn" id="closeContact">&times;</span>
+        </div>
+        <p>
+            Email: dxxeas@gmail.com<br>
+            Discord Server: <a href="https://discord.gg/S3P6VbsTKA" target="_blank">https://discord.gg/S3P6VbsTKA</a><br>
+            Please let us know by email if there is a problem. Thank you.
+        </p>
+    </div>
+
+    <script>
+                const homeBtn = document.getElementById('homeBtn');
+        const aboutBtn = document.getElementById('aboutBtn');
+        const contactBtn = document.getElementById('contactBtn');
+        const aboutModal = document.getElementById('aboutModal');
+        const contactModal = document.getElementById('contactModal');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const closeAbout = document.getElementById('closeAbout');
+        const closeContact = document.getElementById('closeContact');
+
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const passwordOutput = document.getElementById('passwordOutput');
+        const generateBtn = document.getElementById('generateBtn');
+        const copyBtn = document.getElementById('copyBtn');
+
+        const uppercase = document.getElementById('uppercase');
+        const lowercase = document.getElementById('lowercase');
+        const numbers = document.getElementById('numbers');
+        const symbols = document.getElementById('symbols');
+
+        const cookieNotification = document.getElementById('cookieNotification');
+        const acceptCookies = document.getElementById('acceptCookies');
+        const declineCookies = document.getElementById('declineCookies');
+
+        // Dark mode toggle
+        darkModeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
+
+        // Generate password
+        generateBtn.addEventListener('click', () => {
+            let characters = '';
+            if (uppercase.checked) characters += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (lowercase.checked) characters += 'abcdefghijklmnopqrstuvwxyz';
+            if (numbers.checked) characters += '0123456789';
+            if (symbols.checked) characters += '!@#$%^&*()_+[]{}<>?,./';
+            if (characters === '') {
+                passwordOutput.textContent = 'Please select at least one option!';
+                return;
+            }
+            let password = '';
+            for (let i = 0; i < 12; i++) {
+                password += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            passwordOutput.textContent = password;
+        });
+
+        // Copy password
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(passwordOutput.textContent).then(() => {
+                alert('Password copied to clipboard!');
+            });
+        });
+
+        // Cookie notification
+        acceptCookies.addEventListener('click', () => {
+            cookieNotification.classList.add('hidden');
+        });
+
+        declineCookies.addEventListener('click', () => {
+            cookieNotification.classList.add('hidden');
+        });
+
+                // Home button: Redirect to translator section
+                homeBtn.addEventListener('click', () => {
+            window.scrollTo(0, 0);
+        });
+
+        // About button: Show About modal
+        aboutBtn.addEventListener('click', () => {
+            aboutModal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+        });
+
+        // Contact button: Show Contact modal
+        contactBtn.addEventListener('click', () => {
+            contactModal.style.display = 'block';
+            modalOverlay.style.display = 'block';
+        });
+
+        // Close buttons for modals
+        closeAbout.addEventListener('click', () => {
+            aboutModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        closeContact.addEventListener('click', () => {
+            contactModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+
+        // Close modal by clicking on the overlay
+        modalOverlay.addEventListener('click', () => {
+            aboutModal.style.display = 'none';
+            contactModal.style.display = 'none';
+            modalOverlay.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
