@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Onsou Translator</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <div class="cookie-notification" id="cookieNotification">
+        <p>We use cookies to improve your experience. By using our site, you accept cookies.</p>
+        <button id="acceptCookies">Accept</button>
+        <button id="declineCookies">Decline</button>
+    </div>    
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -136,6 +142,100 @@
         .close-btn:hover {
             color: #000;
         }
+
+        /* Cookie notification styles */
+.cookie-notification {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cookie-notification p {
+    margin: 0;
+    flex-grow: 1;
+    text-align: left;
+    padding: 0 1rem;
+}
+
+.cookie-notification button {
+    background: #4a90e2;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0 0.5rem;
+}
+
+.cookie-notification button:hover {
+    background: #66a6ff;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Кнопка для перемикання темного режиму */
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #4a90e2;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.dark-mode-toggle:hover {
+    background: #3a78c2;
+}
+
+/* Темний режим */
+body.dark-mode {
+    background: #121212;
+    color: #f0f0f0;
+}
+
+body.dark-mode header {
+    background: #1e1e1e;
+    color: #f0f0f0;
+}
+
+body.dark-mode header nav a {
+    color: #f0f0f0;
+}
+
+body.dark-mode .translator-section {
+    background: #1e1e1e;
+    color: #f0f0f0;
+}
+
+body.dark-mode textarea,
+body.dark-mode select,
+
+body.dark-mode footer {
+    background: #1e1e1e;
+    color: #f0f0f0;
+}
+
+body.dark-mode .modal {
+    background: #1e1e1e;
+    color: #f0f0f0;
+}
+
     </style>
 </head>
 <body>
@@ -174,6 +274,7 @@
             <button id="translateBtn">Translate</button>
             <h3>Translation:</h3>
             <p id="outputText" style="white-space: pre-wrap;"></p>
+            <div class="dark-mode-toggle" id="darkModeToggle">Dark Mode</div>
         </div>
     </div>
 
@@ -195,7 +296,8 @@
             Translator by: FedouM<br>
             License: none<br>
             Type translator: Free<br>
-            Version: 1.0.1
+            Version: 1.0.2<br>
+            What new in update: added the message with cookies and added button dark mode
         </p>
     </div>
 
@@ -225,6 +327,19 @@
         const outputText = document.getElementById('outputText');
         const sourceLanguageSelect = document.getElementById('sourceLanguageSelect');
         const targetLanguageSelect = document.getElementById('targetLanguageSelect');
+        const cookieNotification = document.getElementById('cookieNotification');
+const acceptCookies = document.getElementById('acceptCookies');
+const declineCookies = document.getElementById('declineCookies');
+
+acceptCookies.addEventListener('click', () => {
+    alert('Cookies accepted!');
+    cookieNotification.classList.add('hidden');
+});
+
+declineCookies.addEventListener('click', () => {
+    alert('Cookies declined!');
+    cookieNotification.classList.add('hidden');
+});
 
         translateBtn.addEventListener('click', async () => {
             const text = inputText.value.trim();
@@ -289,6 +404,11 @@
             contactModal.style.display = 'none';
             modalOverlay.style.display = 'none';
         });
+
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    darkModeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-mode');
+    });
     </script>
 </body>
 </html>
